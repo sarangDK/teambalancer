@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>저장된 플레이어 보기</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <style>
+    body {
+      font-family: 'Orbitron', sans-serif;
+      background-color: #111;
+      color: #fff;
+      padding: 20px;
+    }
+    h1 {
+      color: #00bfff;
+      text-align: center;
+    }
+    input[type="text"] {
+      display: block;
+      margin: 0 auto 20px auto;
+      padding: 10px;
+      border-radius: 6px;
+      border: none;
+      width: 300px;
+      font-size: 16px;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+      max-width: 800px;
+      margin: auto;
+    }
+    li {
+      background: #222;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgba(0, 255, 255, 0.3);
+    }
+    a {
+      color: #0ff;
+      text-decoration: none;
+    }
+    p.center {
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔥 저장된 플레이어 목록</h1>
+  <p class="center"><a href="index.html">← 메인으로 돌아가기</a></p>
+  <input type="text" id="searchInput" placeholder="🔍 이름으로 검색..." />
+
+  <ul id="playerData"></ul>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDp3Vr0l_WbvENgSuPAiN_zfzDTwYzYFzU",
+      authDomain: "teambalancer-7720c.firebaseapp.com",
+      projectId: "teambalancer-7720c"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const playerList = document.getElementById("playerData");
+    const searchInput = document.getElementById("searchInput");
+
+    let allPlayers = [];
+
+    db.collection("players").get().then(snapshot => {
+      if (snapshot.empty) {
+        playerList.innerHTML = '<li>저장된 데이터가 없습니다.</li>';
+        return;
+      }
+
+      snapshot.forEach(doc => {
+        allPlayers.push(doc.data());
+      });
+
+      renderPlayers(allPlayers);
+    }).catch(err => {
+      playerList.innerHTML = '<li>데이터를 불러오는 중 오류 발생: ' + err.message + '</li>';
+    });
+
+    function renderPlayers(players) {
+      playerList.innerHTML = '';
+      players.forEach(p => {
+        const li = document.createElement("li");
+        li.textContent = `${p.name} (${p.tier}, ${p.role}${p.sub ? ' / ' + p.sub : ''}) - ${p.score}점 | 승: ${p.win || 0}, 패: ${p.lose || 0}`;
+        playerList.appendChild(li);
+      });
+    }
+
+    searchInput.addEventListener("input", () => {
+      const keyword = searchInput.value.trim().toLowerCase();
+      const filtered = allPlayers.filter(p => p.name && p.name.toLowerCase().includes(keyword));
+      renderPlayers(filtered);
+    });
+  </script>
+</body>
+</html>
