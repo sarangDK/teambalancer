@@ -117,7 +117,7 @@ button:active {
       <option value="마그챌450">마/그/챌 450~599</option>
       <option value="마그챌300">마/그/챌 300~449</option>
       <option value="마그챌150">마/그/챌 150~299</option>
-      <option value="마그그챌0">마/그/챌 0~149</option>
+      <option value="마그챌0">마/그/챌 0~149</option>
       <option value="다이아1">다이아1</option>
       <option value="다이아2">다이아2</option>
       <option value="에메랄드+다이아">에메랄드+다이아</option>
@@ -196,7 +196,7 @@ button:active {
     const emoji = { 탑: "🔝", 정글: "🌲", 미드: "🧠", 원딜: "🎯", 서폿: "🛡️", 상관없음: "🎲", 미정: "🎲" };
   
    const scoreTable = {
-          "마그그챌900+": { 탑: 56, 정글: 64, 미드: 62, 원딜: 58, 서폿: 54 },
+          "마그챌900+": { 탑: 56, 정글: 64, 미드: 62, 원딜: 58, 서폿: 54 },
           "마그챌750": { 탑: 54, 정글: 62, 미드: 60, 원딜: 56, 서폿: 52 },
           "마그챌600": { 탑: 52, 정글: 60, 미드: 57, 원딜: 53, 서폿: 50 },
           "마그챌450": { 탑: 50, 정글: 58, 미드: 54, 원딜: 50, 서폿: 48 },
@@ -227,19 +227,33 @@ button:active {
     renderPlayerList();
   
     function addPlayer() {
-      const name = document.getElementById('name').value;
-      const tier = document.getElementById('tier').value;
-      const lane1 = document.getElementById('lane1').value;
-      const lane2 = document.getElementById('lane2').value;
-  
-      const role = lane1 !== "상관없음" ? lane1 : "미정";
-      const score = scoreTable[tier] && scoreTable[tier][role] || 0;
-  
-      players.push({ name, tier, score, role, sub: lane2, win: 0, lose: 0 });
-      saveToLocal();
-      renderPlayerList();
+  const name = document.getElementById('name').value.trim();
+  const tier = document.getElementById('tier').value;
+  const lane1 = document.getElementById('lane1').value;
+  const lane2 = document.getElementById('lane2').value;
+
+  const role = lane1 !== "상관없음" ? lane1 : "미정";
+  let score = 0;
+
+  if (scoreTable[tier]) {
+    if (role !== "미정") {
+      // 메인 포지션 점수
+      score = scoreTable[tier][role];
+    } else if (lane2 !== "상관없음") {
+      // 서브 포지션 점수로 계산
+      score = scoreTable[tier][lane2];
+    } else {
+      // 평균 점수 계산
+      const values = Object.values(scoreTable[tier]);
+      score = Math.round(values.reduce((a, b) => a + b, 0) / values.length);
     }
-  
+  }
+
+  players.push({ name, tier, score, role, sub: lane2, win: 0, lose: 0 });
+  saveToLocal();
+  renderPlayerList();
+}
+
     function renderPlayerList() {
       const list = document.getElementById('playerList');
       list.innerHTML = '';
