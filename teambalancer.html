@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LoL 팀 밸런서</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: 'Orbitron', sans-serif;
+      background: linear-gradient(135deg, #0f0f0f, #1a1a1a);
+      color: #fff;
+    }
+    h1, h2, h3 {
+      text-align: center;
+      color: #00bfff;
+    }
+    input, select, button {
+      margin: 5px;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      font-size: 14px;
+    }
+    input, select {
+      width: 140px;
+    }
+    button {
+      background-color: #222;
+      color: #0ff;
+      cursor: pointer;
+      box-shadow: 0 0 10px #0ff;
+      transition: 0.3s;
+    }
+    button:hover {
+      background-color: #0ff;
+      color: #000;
+    }
+    #playerList, #teamA, #teamB, #filteredResult {
+      list-style: none;
+      padding-left: 0;
+    }
+    .team {
+      background-color: #121212;
+      border-radius: 12px;
+      margin-top: 20px;
+      padding: 15px;
+      box-shadow: 0 0 10px rgba(0,255,255,0.3);
+    }
+    .team h2 {
+      color: #ff4444;
+    }
+    .blue h2 {
+      color: #44aaff;
+    }
+    .player-list li, .team li {
+      margin: 4px 0;
+    }
+    .delete-btn {
+      margin-left: 10px;
+      background: #ff4444;
+      border-radius: 4px;
+      color: white;
+      padding: 2px 6px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .filter-box {
+      margin-top: 40px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎮 LoL 팀 밸런서</h1>
+
+  <div class="controls">
+    <input type="text" id="name" placeholder="닉네임" />
+    <select id="tier">
+      <option value="마고챌900+">마/고/챌 900 이상</option>
+      <option value="마고챌750">마/고/챌 750~899</option>
+      <option value="마고챌600">마/고/챌 600~749</option>
+      <option value="마고챌450">마/고/챌 450~599</option>
+      <option value="마고챌300">마/고/챌 300~449</option>
+      <option value="마고챌150">마/고/챌 150~299</option>
+      <option value="마고챌0">마/고/챌 0~149</option>
+      <option value="다이아1">다이아1</option>
+      <option value="다이아2">다이아2</option>
+      <option value="에메랄드+다이아">에메랄드+다이아</option>
+      <option value="에메랄드">에메랄드</option>
+      <option value="플레1">플래티넘1</option>
+      <option value="플레2">플래티넘2</option>
+      <option value="플레3">플래티넘3</option>
+      <option value="플레4">플래티넘4</option>
+      <option value="골드1">골드1</option>
+      <option value="골드2">골드2</option>
+      <option value="골드3">골드3</option>
+      <option value="골드4">골드4</option>
+      <option value="실버1">실버1</option>
+      <option value="실버2">실버2</option>
+      <option value="실버3">실버3</option>
+      <option value="실버4">실버4</option>
+      <option value="브론즈">브론즈 이하</option>
+    </select>
+    <select id="lane1">
+      <option value="상관없음">상관없음</option>
+      <option value="탑">탑</option>
+      <option value="정글">정글</option>
+      <option value="미드">미드</option>
+      <option value="원딜">원딜</option>
+      <option value="서폿">서폿</option>
+    </select>
+    <select id="lane2">
+      <option value="상관없음">상관없음</option>
+      <option value="탑">탑</option>
+      <option value="정글">정글</option>
+      <option value="미드">미드</option>
+      <option value="원딜">원딜</option>
+      <option value="서폿">서폿</option>
+    </select>
+    <button onclick="addPlayer()">추가</button>
+    <button onclick="clearPlayers()">초기화</button>
+    <button onclick="savePlayersToFirebase()">🔥 저장</button>
+  </div>
+
+  <ul id="playerList" class="player-list"></ul>
+  <button onclick="generateTeams()">팀 자동 생성</button>
+
+  <div class="team blue">
+    <h2>🔵 블루 팀</h2>
+    <ul id="teamA" style="border: 1px solid #44aaff; padding: 10px; border-radius: 8px;"></ul>
+    <p id="scoreA"></p>
+  </div>
+  
+  <div class="team">
+    <h2>🔴 레드 팀</h2>
+    <ul id="teamB" style="border: 1px solid #ff4444; padding: 10px; border-radius: 8px;"></ul>
+    <p id="scoreB"></p>
+  </div>
+  
+  <div style="text-align:center; margin-top: 10px;">
+    <button onclick="generateTeams()">🔁 팀 다시 섞기</button>
+  </div>
+  
+  <div style="text-align:center; margin-top: 20px;">
+    <button onclick="declareWinner('A')">🔵 블루 팀 승리</button>
+    <button onclick="declareWinner('B')">🔴 레드 팀 승리</button>
+  </div>
+
+
+  </div>
+  
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDp3Vr0l_WbvENgSuPAiN_zfzDTwYzYFzU",
+      authDomain: "teambalancer-7720c.firebaseapp.com",
+      projectId: "teambalancer-7720c"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+  
+    const emoji = { 탑: "🔝", 정글: "🌲", 미드: "🧠", 원딜: "🎯", 서폿: "🛡️", 상관없음: "🎲", 미정: "🎲" };
+  
+   const scoreTable = {
+          "마고챌900+": { 탑: 56, 정글: 64, 미드: 62, 원딜: 58, 서폿: 54 },
+          "마고챌750": { 탑: 54, 정글: 62, 미드: 60, 원딜: 56, 서폿: 52 },
+          "마고챌600": { 탑: 52, 정글: 60, 미드: 57, 원딜: 53, 서폿: 50 },
+          "마고챌450": { 탑: 50, 정글: 58, 미드: 54, 원딜: 50, 서폿: 48 },
+          "마고챌300": { 탑: 48, 정글: 55, 미드: 52, 원딜: 47, 서폿: 45 },
+          "마고챌150": { 탑: 46, 정글: 52, 미드: 50, 원딜: 45, 서폿: 42 },
+          "마고챌0":   { 탑: 43, 정글: 49, 미드: 48, 원딜: 42, 서폿: 40 },
+          "다이아1":   { 탑: 40, 정글: 45, 미드: 42, 원딜: 40, 서폿: 38 },
+          "다이아2":   { 탑: 34, 정글: 38, 미드: 39, 원딜: 33, 서폿: 32 },
+          "에메랄드+다이아": { 탑: 30, 정글: 36, 미드: 38, 원딜: 31, 서폿: 30 },
+          "에메랄드":   { 탑: 28, 정글: 32, 미드: 37, 원딜: 28, 서폿: 27 },
+          "플레1":     { 탑: 26, 정글: 30, 미드: 29, 원딜: 25, 서폿: 24 },
+          "플레2":     { 탑: 25, 정글: 28, 미드: 27, 원딜: 24, 서폿: 22 },
+          "플레3":     { 탑: 23, 정글: 26, 미드: 24, 원딜: 22, 서폿: 21 },
+          "플레4":     { 탑: 22, 정글: 23, 미드: 22, 원딜: 20, 서폿: 19 },
+          "골드1":     { 탑: 21, 정글: 18, 미드: 17, 원딜: 18, 서폿: 21 },
+          "골드2":     { 탑: 20, 정글: 16, 미드: 16, 원딜: 17, 서폿: 20 },
+          "골드3":     { 탑: 19, 정글: 14, 미드: 15, 원딜: 16, 서폿: 18 },
+          "골드4":     { 탑: 17, 정글: 12, 미드: 13, 원딜: 14, 서폿: 17 },
+          "실버1":     { 탑: 15, 정글: 10, 미드: 12, 원딜: 10, 서폿: 15 },
+          "실버2":     { 탑: 13, 정글: 8,  미드: 10, 원딜: 8,  서폿: 13 },
+          "실버3":     { 탑: 11, 정글: 6,  미드: 7,  원딜: 7,  서폿: 11 },
+          "실버4":     { 탑: 9,  정글: 4,  미드: 5,  원딜: 5,  서폿: 9 },
+          "브론즈":    { 탑: 5,  정글: 2,  미드: 3,  원딜: 2,  서폿: 4 }
+        };
+    
+  
+    const players = JSON.parse(localStorage.getItem('players') || '[]');
+    renderPlayerList();
+  
+    function addPlayer() {
+      const name = document.getElementById('name').value;
+      const tier = document.getElementById('tier').value;
+      const lane1 = document.getElementById('lane1').value;
+      const lane2 = document.getElementById('lane2').value;
+  
+      const role = lane1 !== "상관없음" ? lane1 : "미정";
+      const score = scoreTable[tier] && scoreTable[tier][role] || 0;
+  
+      players.push({ name, tier, score, role, sub: lane2, win: 0, lose: 0 });
+      saveToLocal();
+      renderPlayerList();
+    }
+  
+    function renderPlayerList() {
+      const list = document.getElementById('playerList');
+      list.innerHTML = '';
+      players.forEach((p, i) => {
+        const item = document.createElement('li');
+        const winRate = (p.win + p.lose > 0) ? ` | 승률: ${Math.round((p.win / (p.win + p.lose)) * 100)}%` : '';
+        item.textContent = `${emoji[p.role] || ''} ${p.name} (${p.tier}, ${p.role}${p.sub ? ' / ' + p.sub : ''}) - ${p.score}점 | 승: ${p.win} 패: ${p.lose}${winRate}`;
+        const edit = document.createElement('span');
+        edit.textContent = '✏️';
+        edit.className = 'delete-btn';
+        edit.onclick = () => editPlayer(i);
+        const del = document.createElement('span');
+        del.textContent = '❌';
+        del.className = 'delete-btn';
+        del.onclick = () => { players.splice(i, 1); saveToLocal(); renderPlayerList(); };
+        item.appendChild(edit);
+        item.appendChild(del);
+        list.appendChild(item);
+      });
+    }
+  
+    function editPlayer(index) {
+      const p = players[index];
+      document.getElementById('name').value = p.name;
+      document.getElementById('tier').value = p.tier;
+      document.getElementById('lane1').value = p.role;
+      document.getElementById('lane2').value = p.sub;
+      players.splice(index, 1);
+      saveToLocal();
+      renderPlayerList();
+    }
+  
+    function clearPlayers() {
+      players.length = 0;
+      saveToLocal();
+      renderPlayerList();
+      document.getElementById('teamA').innerHTML = '';
+      document.getElementById('teamB').innerHTML = '';
+      document.getElementById('scoreA').textContent = '';
+      document.getElementById('scoreB').textContent = '';
+    }
+  
+    let currentTeams = { A: [], B: [] };
+  
+   
+  function generateTeams() {
+    const shuffled = [...players].sort(() => Math.random() - 0.5).sort((a, b) => b.score - a.score);
+    const teamA = [], teamB = [];
+    let sumA = 0, sumB = 0;
+
+    function canAdd(player, team) {
+      const lanes = team.map(p => p.role);
+      if (lanes.includes(player.role)) {
+        if (player.sub && !lanes.includes(player.sub)) return true;
+        return false;
+      }
+      return true;
+    }
+
+    for (const player of shuffled) {
+      if (teamA.length < 5 && (sumA <= sumB || teamB.length >= 5) && canAdd(player, teamA)) {
+        teamA.push(player);
+        sumA += player.score;
+      } else if (teamB.length < 5 && canAdd(player, teamB)) {
+        teamB.push(player);
+        sumB += player.score;
+      } else if (teamA.length < 5) {
+        teamA.push(player);
+        sumA += player.score;
+      } else if (teamB.length < 5) {
+        teamB.push(player);
+        sumB += player.score;
+      }
+      if (teamA.length === 5 && teamB.length === 5) break;
+    }
+
+    currentTeams = { A: teamA, B: teamB };
+    renderTeams(teamA, teamB, sumA, sumB);
+  }
+
+
+
+  const leftovers = players.filter(p => !usedNames.has(p.name));
+  leftovers.sort(() => Math.random() - 0.5);
+  let scoreA = teamA.reduce((s, p) => s + p.score, 0);
+  let scoreB = teamB.reduce((s, p) => s + p.score, 0);
+
+  leftovers.forEach(p => {
+    if (scoreA <= scoreB) {
+      teamA.push(p); scoreA += p.score;
+    } else {
+      teamB.push(p); scoreB += p.score;
+    }
+  });
+
+  currentTeams = { A: teamA, B: teamB };
+  renderTeams(teamA, teamB, scoreA, scoreB);
+
+
+  
+    function renderTeams(teamA, teamB, scoreA, scoreB) {
+      const listA = document.getElementById('teamA');
+      const listB = document.getElementById('teamB');
+      listA.innerHTML = '';
+      listB.innerHTML = '';
+      teamA.forEach(p => {
+        const li = document.createElement('li');
+        li.textContent = `${emoji[p.role] || ''} ${p.name} (${p.role}${p.sub ? ' / ' + p.sub : ''}) - ${p.score}점`;
+        listA.appendChild(li);
+      });
+      teamB.forEach(p => {
+        const li = document.createElement('li');
+        li.textContent = `${emoji[p.role] || ''} ${p.name} (${p.role}${p.sub ? ' / ' + p.sub : ''}) - ${p.score}점`;
+        listB.appendChild(li);
+      });
+      document.getElementById('scoreA').textContent = `총점: ${scoreA}`;
+      document.getElementById('scoreB').textContent = `총점: ${scoreB}`;
+    }
+  
+    function savePlayersToFirebase() {
+      players.forEach(p => {
+        db.collection('players').add(p)
+          .then(() => console.log(`✅ ${p.name} 저장됨`))
+          .catch(error => console.error(`❌ 저장 실패: ${error}`));
+      });
+    }
+  
+    function saveToLocal() {
+      localStorage.setItem('players', JSON.stringify(players));
+    }
+  
+    function declareWinner(team) {
+      const winTeam = currentTeams[team];
+      const loseTeam = currentTeams[team === 'A' ? 'B' : 'A'];
+      winTeam.forEach(p => {
+        const found = players.find(pl => pl.name === p.name);
+        if (found) found.win = (found.win || 0) + 1;
+      });
+      loseTeam.forEach(p => {
+        const found = players.find(pl => pl.name === p.name);
+        if (found) found.lose = (found.lose || 0) + 1;
+      });
+      saveToLocal();
+      renderPlayerList();
+    }
+  </script>
+</body>
+</html>
