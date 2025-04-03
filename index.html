@@ -3,14 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LoL 팀 밸런서</title>
+  <title>LoL 팀 밸런서</title>\
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet"/>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-  
 
   <style>
     body {
@@ -120,6 +117,29 @@ button:active {
     box-shadow: 0 0 15px rgba(0, 191, 255, 0.8);
     transform: scale(1.05);
   }
+  .intro-message {
+  max-width: 600px;
+  margin: 0 auto 30px;
+  padding: 15px 20px;
+  background-color: #1e1e1e;
+  border: 1px solid #00bfff;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 191, 255, 0.3);
+  color: #fff;
+  text-align: center;
+  line-height: 1.6;
+  font-size: 15px;
+}
+.view-players-link {
+  color: #0ff;
+  font-weight: bold;
+  text-decoration: underline;
+}
+.view-players-link:hover {
+  color: #fff;
+  text-shadow: 0 0 5px #0ff;
+}
+
 
 
 
@@ -132,6 +152,15 @@ button:active {
 </head>
 <body>
   <h1>🎮 LoL 팀 밸런서</h1>
+
+  <div class="intro-message">
+    <p>
+      👋 <strong>플레이어 정보를 모두 입력한 뒤</strong> <span style="color:#0ff;">‘데이터 저장’</span>을 눌러주세요.<br />
+      각 매치 후에는 <strong>‘블루팀 승리’</strong> 또는 <strong>‘레드팀 승리’</strong> 버튼을 눌러야<br />
+      승/패 기록이 저장됩니다.<br />
+      <a href="firebaseviwer.html" class="view-players-link">📊 저장된 플레이어 보기</a>에서 라인별 승률을 확인할 수 있어요!
+    </p>
+  </div>
 
   <div class="controls">
     <input type="text" id="name" placeholder="닉네임" />
@@ -469,9 +498,7 @@ button:active {
       renderPlayerList();
     }
 
-    window.onload = function () {
-    toastr.success("LoL 팀 밸런서에 오신 것을 환영합니다!");
-  };
+
 
   </script>
 </body>
