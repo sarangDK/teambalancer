@@ -433,17 +433,34 @@ button:active {
     function saveToLocal() {
       localStorage.setItem('players', JSON.stringify(players));
     }
-  
+    function updatePlayerInFirebase(playerName, winIncrement = 0, loseIncrement = 0) {
+      db.collection('players')
+        .where('name', '==', playerName)
+        .get()
+        .then(querySnapshot => {
+          if (!querySnapshot.empty) {
+            querySnapshot.forEach(doc => {
+              const playerData = doc.data();
+              const updatedWin = (playerData.win || 0) + winIncrement;
+              const updatedLose = (playerData.lose || 0) + loseIncrement;
+              db.collection('players').doc(doc.id).update({ win: updatedWin, lose: updatedLose });
+            });
+          }
+        });
+    }
+
     function declareWinner(team) {
       const winTeam = currentTeams[team];
       const loseTeam = currentTeams[team === 'A' ? 'B' : 'A'];
       winTeam.forEach(p => {
         const found = players.find(pl => pl.name === p.name);
         if (found) found.win = (found.win || 0) + 1;
+        updatePlayerInFirebase(p.name, 1, 0);
       });
       loseTeam.forEach(p => {
         const found = players.find(pl => pl.name === p.name);
         if (found) found.lose = (found.lose || 0) + 1;
+        updatePlayerInFirebase(p.name, 0, 1);
       });
       saveToLocal();
       renderPlayerList();
