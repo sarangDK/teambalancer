@@ -79,6 +79,35 @@
       margin-top: 40px;
       text-align: center;
     }
+    .team ul li {
+  animation: fadeInUp 0.5s ease both;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+button:active {
+  transform: scale(0.95);
+  box-shadow: 0 0 5px #0ff;
+}
+
+.player-list li:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transition: 0.3s;
+  padding-left: 10px;
+}
+
+
+
+
+
   </style>
 </head>
 <body>
