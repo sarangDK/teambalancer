@@ -155,7 +155,8 @@ button:active {
 
   <div class="intro-message">
     <p>
-      👋 <strong>플레이어 정보를 모두 입력한 뒤</strong> <span style="color:#0ff;">‘데이터 저장’</span>을 눌러주세요.<br />
+      👋 <strong>1.플레이어 정보를 모두 입력한 뒤</strong> <span style="color:#0ff;">‘데이터 저장’</span>을 눌러주세요.<br />
+      <strong>2. 이후 '데이터 저장'은 새로운 플레이어만 추가하고 눌러주세요요</strong>
       각 매치 후에는 <strong>‘블루팀 승리’</strong> 또는 <strong>‘레드팀 승리’</strong> 버튼을 눌러야<br />
       승/패 기록이 저장됩니다.<br />
       <a href="firebaseviwer.html" class="view-players-link">📊 저장된 플레이어 보기</a>에서 라인별 승률을 확인할 수 있어요!
@@ -464,8 +465,19 @@ button:active {
     }
   
     function savePlayersToFirebase() {
-  const promises = players.map(p => 
-    db.collection('players').add(p)
+  const promises = players.map(p =>
+    db.collection('players')
+      .where('name', '==', p.name)
+      .get()
+      .then(snapshot => {
+        if (snapshot.empty) {
+          // 존재하지 않을 때만 추가
+          return db.collection('players').add(p);
+        } else {
+          console.log(`⚠️ 이미 존재하는 플레이어: ${p.name}`);
+          return Promise.resolve(); // 아무것도 안 함
+        }
+      })
   );
 
   Promise.all(promises)
@@ -473,7 +485,7 @@ button:active {
       Swal.fire({
         icon: 'success',
         title: '저장 완료!',
-        text: '모든 플레이어 정보가 Firebase에 저장되었습니다.',
+        text: '중복을 제외한 새로운 플레이어가 Firebase에 저장되었습니다.',
         confirmButtonColor: '#00bfff',
         background: '#1a1a1a',
         color: '#fff'
