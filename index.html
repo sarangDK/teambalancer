@@ -226,11 +226,14 @@ button:active {
     <button onclick="addPlayer()">추가</button>
     <button onclick="clearPlayers()">초기화</button>
     <button onclick="savePlayersToFirebase()">데이터 저장</button>
-    <div class="controls">
+    <button onclick="loadPlayersFromFirebase()">🔄 저장된 팀원 불러오기</button>
+   
+  </div>
+
+  <div class="controls">
       
-      <a href="firebaseviwer.html" class="view-players-btn">📊 저장된 플레이어 보기</a>
-      
-    </div>
+    <a href="firebaseviwer.html" class="view-players-btn">📊 저장된 플레이어 보기</a>
+    
   </div>
 
   <ul id="playerList" class="player-list"></ul>
@@ -539,6 +542,43 @@ button:active {
       saveToLocal();
       renderPlayerList();
     }
+
+    function loadPlayersFromFirebase() {
+  db.collection('players')
+    .get()
+    .then(snapshot => {
+      const loadedPlayers = [];
+      snapshot.forEach(doc => {
+        loadedPlayers.push(doc.data());
+      });
+
+      // localStorage에 저장
+      localStorage.setItem('players', JSON.stringify(loadedPlayers));
+      players.length = 0;
+      players.push(...loadedPlayers);
+      renderPlayerList();
+
+      Swal.fire({
+        icon: 'info',
+        title: '데이터 로드 완료!',
+        text: `${loadedPlayers.length}명의 플레이어 데이터를 불러왔습니다.`,
+        confirmButtonColor: '#00bfff',
+        background: '#1a1a1a',
+        color: '#fff'
+      });
+    })
+    .catch(error => {
+      console.error("❌ Firebase에서 불러오기 실패:", error);
+      Swal.fire({
+        icon: 'error',
+        title: '불러오기 실패',
+        text: `에러: ${error.message}`,
+        confirmButtonColor: '#ff4444',
+        background: '#1a1a1a',
+        color: '#fff'
+      });
+    });
+}
 
 
 
