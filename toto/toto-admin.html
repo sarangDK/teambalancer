@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LoL 토토 관리자 페이지</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="toto.css" />
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    body {
+      background: linear-gradient(145deg, #0a0a0a, #111);
+      font-family: 'Orbitron', sans-serif;
+      color: #f0f0f0;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #c89b3c;
+      text-shadow: 0 0 10px rgba(200, 155, 60, 0.6);
+      margin-bottom: 40px;
+    }
+    h2 {
+      color: #00bfff;
+      border-bottom: 1px solid #00bfff;
+      padding-bottom: 6px;
+      margin-bottom: 20px;
+    }
+    input[type="text"] {
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      background-color: #1e1e1e;
+      color: #fff;
+      width: 220px;
+      box-shadow: 0 0 8px rgba(0,255,255,0.2);
+    }
+    button {
+      padding: 10px 20px;
+      margin: 5px;
+      border-radius: 8px;
+      border: none;
+      font-weight: bold;
+      font-family: 'Orbitron';
+      color: #0ff;
+      background-color: #111;
+      border: 2px solid #00bfff;
+      transition: 0.3s ease;
+      box-shadow: 0 0 10px rgba(0,255,255,0.3);
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0ff;
+      color: #000;
+      box-shadow: 0 0 20px #0ff;
+    }
+    ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    li {
+      margin: 10px 0;
+      padding: 12px;
+      background-color: #1a1a1a;
+      border-radius: 10px;
+      box-shadow: 0 0 8px rgba(0,255,255,0.2);
+      transition: transform 0.3s ease;
+    }
+    li:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 0 12px rgba(0,255,255,0.4);
+    }
+    .admin-section {
+      max-width: 700px;
+      margin: 0 auto 40px auto;
+      padding: 20px;
+      background-color: #151515;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0, 191, 255, 0.15);
+    }
+    #admin-info {
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 16px;
+      color: #ccc;
+    }
+    #currentMatchId {
+      color: #00ffff;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔐 LoL 토토 관리자 페이지</h1>
+
+  <div id="admin-info">관리자 인증 중...</div>
+
+  <div id="admin-give-money" class="admin-section" style="text-align:center; margin-top:40px;">
+    <h2>💸 유저에게 금액 지급</h2>
+    <input type="email" id="targetEmail" placeholder="유저 이메일" style="padding:6px; width:220px;">
+    <input type="number" id="giveAmount" placeholder="$ 금액" style="padding:6px; width:100px;">
+    <button onclick="giveMoneyToUser()" style="padding:8px 16px; margin-left:10px;">지급</button>
+  </div>
+
+  <div id="match-create" class="admin-section">
+    <h2>🎮 새로운 경기 개설</h2>
+    <input type="text" id="newMatchId" placeholder="경기 ID 입력 (예: match_001)">
+    <button onclick="createMatch()">⚔️ 개설하기</button>
+  </div>
+  
+  <div id="match-list" class="admin-section">
+    <h2>🗂️ 처리할 경기 목록</h2>
+    <ul id="matchList"></ul>
+  </div>
+
+  <div id="match-detail" class="admin-section" style="display:none;">
+    <h2>📋 선택된 경기: <span id="currentMatchId"></span></h2>
+    <ul id="betList"></ul>
+    <div style="text-align:center; margin-top:20px;">
+      <button onclick="resolveMatch('블루')">🔵 블루팀 승리 처리</button>
+      <button onclick="resolveMatch('레드')">🔴 레드팀 승리 처리</button>
+    </div>
+  </div>
+
+  <script src="toto-admin.js"></script>
+</body>
+</html>

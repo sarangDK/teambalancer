@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>토토 베팅 내역</title>
+  <link rel="stylesheet" href="toto.css" />
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+  <h1>📜 나의 베팅 내역</h1>
+  <div class="center">
+    <p><strong id="user-email"></strong> 님</p>
+    <p>💰 잔액: <span id="balance"></span></p>
+    <button onclick="logout()">🔓 로그아웃</button>
+    <button onclick="location.href='toto-bet.html'">← 베팅하러 가기</button>
+  </div>
+
+  <ul id="bet-list" class="bet-list"></ul>
+
+  <script src="toto-history.js"></script>
+</body>
+</html>

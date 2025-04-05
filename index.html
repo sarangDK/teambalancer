@@ -328,6 +328,12 @@ function arraysEqual(a, b) {
   return JSON.stringify(a) === JSON.stringify(b);
 }
 
+function deletePlayer(index) {
+  players.splice(index, 1);  // 해당 인덱스에서 플레이어 삭제
+  saveToLocal();  // 로컬스토리지에 다시 저장
+  renderPlayerList();  // 플레이어 목록 재렌더링
+}
+
 
 
 
