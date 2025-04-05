@@ -5,183 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>LoL 팀 밸런서</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-  <style>
- body {
-  background: linear-gradient(145deg, #0a0a0a, #111);
-  font-family: 'Orbitron', sans-serif;
-  color: #f0f0f0;
-}
-
-h1, h2, h3 {
-  text-align: center;
-  color: #c89b3c; /* 골드색 */
-  text-shadow: 0 0 10px rgba(200, 155, 60, 0.6);
-}
-
-input, select, button {
-  margin: 5px;
-  padding: 10px;
-  border-radius: 8px;
-  border: none;
-  font-size: 14px;
-  font-family: 'Orbitron', sans-serif;
-}
-
-input, select {
-  width: 140px;
-  background-color: #222;
-  color: #fff;
-  border: 1px solid #444;
-}
-
-button {
-  background-color: #111;
-  border: 2px solid #c89b3c;
-  color: #0ff;
-  font-weight: bold;
-  text-transform: uppercase;
-  box-shadow: 0 0 12px rgba(0, 255, 255, 0.3);
-  transition: all 0.3s ease;
-}
-
-button:hover {
-  background-color: #0ff;
-  color: #000;
-  box-shadow: 0 0 20px #0ff;
-}
-
-button:active {
-  transform: scale(0.96);
-  box-shadow: 0 0 5px #0ff;
-}
-
-#playerList, #teamA, #teamB, #filteredResult {
-  list-style: none;
-  padding-left: 0;
-}
-
-.team {
-  background: linear-gradient(to bottom, #1a1a1a, #101010);
-  border: 2px solid #2e2e2e;
-  border-radius: 12px;
-  margin-top: 20px;
-  padding: 15px;
-  box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
-}
-
-.team h2 {
-  color: #ff4444;
-  text-shadow: 0 0 5px #ff4444;
-}
-
-.blue h2 {
-  color: #44aaff;
-  text-shadow: 0 0 5px #44aaff;
-}
-
-.team ul li {
-  margin: 4px 0;
-  padding: 6px;
-  background-color: #1e1e1e;
-  border-left: 4px solid #00bfff;
-  border-radius: 6px;
-  animation: fadeInUp 0.5s ease both;
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.delete-btn {
-  margin-left: 10px;
-  background: #ff4444;
-  border-radius: 4px;
-  color: white;
-  padding: 2px 6px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 20px;
-  justify-content: center;
-}
-
-.view-players-btn {
-  display: inline-block;
-  text-align: center;
-  background-color: #00bfff;
-  color: #fff;
-  padding: 10px 20px;
-  border-radius: 8px;
-  text-decoration: none;
-  font-weight: bold;
-  box-shadow: 0 0 12px rgba(0, 191, 255, 0.4);
-  transition: all 0.3s ease;
-}
-
-.view-players-btn:hover {
-  background-color: #fff;
-  color: #00bfff;
-  box-shadow: 0 0 20px rgba(0, 191, 255, 0.8);
-  transform: scale(1.05);
-}
-
-.intro-message {
-  max-width: 700px;
-  margin: 0 auto 30px;
-  padding: 15px 20px;
-  background-color: #1e1e1e;
-  border: 1px solid #c89b3c;
-  border-radius: 10px;
-  box-shadow: 0 0 15px rgba(200, 155, 60, 0.3);
-  color: #f0f0f0;
-  text-align: center;
-  line-height: 1.6;
-  font-size: 15px;
-}
-
-.view-players-link {
-  color: #0ff;
-  font-weight: bold;
-  text-decoration: underline;
-}
-
-.view-players-link:hover {
-  color: #fff;
-  text-shadow: 0 0 5px #0ff;
-}
-
-
-
-
-
-
-
-
-  </style>
 </head>
 <body>
-  <h1>🎮 LoL 팀 밸런서</h1>
+  <h1 class="glow glitch">🎮 LoL 팀 밸런서</h1>
 
-  <div class="intro-message">
+  <div class="intro-message shine">
     <p>
       👋 <strong>1.플레이어 정보를 모두 입력한 뒤</strong> <span style="color:#0ff;">‘데이터 저장’</span>을 눌러주세요.<br />
-      <strong>2. 이후 '데이터 저장'은 새로운 플레이어만 추가하고 눌러주세요요</strong>
+      <strong>2. 이후 '데이터 저장'은 새로운 플레이어만 추가하고 눌러주세요</strong><br />
       각 매치 후에는 <strong>‘블루팀 승리’</strong> 또는 <strong>‘레드팀 승리’</strong> 버튼을 눌러야<br />
       승/패 기록이 저장됩니다.<br />
       <a href="firebaseviwer.html" class="view-players-link">📊 저장된 플레이어 보기</a>에서 라인별 승률을 확인할 수 있어요!
@@ -373,27 +208,43 @@ button:active {
   renderPlayerList();
 }
 
-    function renderPlayerList() {
-      const list = document.getElementById('playerList');
-      list.innerHTML = '';
-      players.forEach((p, i) => {
-        const item = document.createElement('li');
-        const winRate = (p.win + p.lose > 0) ? ` | 승률: ${Math.round((p.win / (p.win + p.lose)) * 100)}%` : '';
-        item.textContent = `${emoji[p.role] || ''} ${p.name} (${p.tier}, ${p.role}${p.sub ? ' / ' + p.sub : ''}) - ${p.score}점 | 승: ${p.win} 패: ${p.lose}${winRate}`;
-        const edit = document.createElement('span');
-        edit.textContent = '✏️';
-        edit.className = 'delete-btn';
-        edit.onclick = () => editPlayer(i);
-        const del = document.createElement('span');
-        del.textContent = '❌';
-        del.className = 'delete-btn';
-        del.onclick = () => { players.splice(i, 1); saveToLocal(); renderPlayerList(); };
-        item.appendChild(edit);
-        item.appendChild(del);
-        list.appendChild(item);
-      });
-    }
-  
+function renderPlayerList() {
+  const list = document.getElementById('playerList');
+  list.innerHTML = '';
+  players.forEach((p, i) => {
+    const item = document.createElement('li');
+    item.style.display = 'flex';
+    item.style.justifyContent = 'space-between';
+    item.style.alignItems = 'center';
+    item.style.padding = '10px';
+    item.style.marginBottom = '8px';
+    item.style.background = '#1f1f1f';
+    item.style.border = '1px solid #333';
+    item.style.borderRadius = '8px';
+    item.style.boxShadow = '0 0 6px rgba(0,255,255,0.2)';
+
+    const winRate = (p.win + p.lose > 0)
+      ? `<span style="color:#00ff99;">승률: ${Math.round((p.win / (p.win + p.lose)) * 100)}%</span>`
+      : `<span style="color:#999;">승률 없음</span>`;
+
+    item.innerHTML = `
+      <div>
+        <strong style="color:#0ff;">${emoji[p.role] || ''} ${p.name}</strong> 
+        <span style="color:#ccc;">(${p.tier}, ${p.role}${p.sub ? ' / ' + p.sub : ''})</span><br/>
+        <span style="color:#ffd700;">점수: ${p.score}</span> |
+        <span style="color:#00bfff;">승: ${p.win}</span> |
+        <span style="color:#ff6666;">패: ${p.lose}</span> |
+        ${winRate}
+      </div>
+      <div>
+        <button class="edit-btn" onclick="editPlayer(${i})">✏️</button>
+        <button class="del-btn" onclick="deletePlayer(${i})">❌</button>
+      </div>
+    `;
+    list.appendChild(item);
+  });
+}
+
     function editPlayer(index) {
       const p = players[index];
       document.getElementById('name').value = p.name;

@@ -1,0 +1,217 @@
+body {
+    background: linear-gradient(145deg, #0a0a0a, #111);
+    font-family: 'Orbitron', sans-serif;
+    color: #f0f0f0;
+    margin: 0;
+    padding: 20px;
+  }
+  
+  h1, h2, h3 {
+    text-align: center;
+    color: #c89b3c;
+    text-shadow: 0 0 10px rgba(200, 155, 60, 0.6);
+  }
+  
+  input, select, button {
+    margin: 5px;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    font-size: 14px;
+    font-family: 'Orbitron', sans-serif;
+  }
+  
+  input, select {
+    width: 140px;
+    background-color: #222;
+    color: #fff;
+    border: 1px solid #444;
+  }
+  
+  button {
+    background-color: #111;
+    border: 2px solid #c89b3c;
+    color: #0ff;
+    font-weight: bold;
+    text-transform: uppercase;
+    box-shadow: 0 0 12px rgba(0, 255, 255, 0.3);
+    transition: all 0.3s ease;
+  }
+  button:hover {
+    background-color: #0ff;
+    color: #000;
+    box-shadow: 0 0 20px #0ff;
+  }
+  button:active {
+    transform: scale(0.96);
+    box-shadow: 0 0 5px #0ff;
+  }
+  
+  #playerList, #teamA, #teamB, #filteredResult {
+    list-style: none;
+    padding-left: 0;
+  }
+  
+  .team {
+    background: linear-gradient(to bottom, #1a1a1a, #101010);
+    border: 2px solid #2e2e2e;
+    border-radius: 12px;
+    margin-top: 20px;
+    padding: 15px;
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
+  }
+  .team h2 {
+    color: #ff4444;
+    text-shadow: 0 0 5px #ff4444;
+  }
+  .blue h2 {
+    color: #44aaff;
+    text-shadow: 0 0 5px #44aaff;
+  }
+  .team ul li {
+    margin: 4px 0;
+    padding: 6px;
+    background-color: #1e1e1e;
+    border-left: 4px solid #00bfff;
+    border-radius: 6px;
+    animation: fadeInUp 0.5s ease both;
+  }
+  
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+    justify-content: center;
+  }
+  
+  .view-players-btn {
+    display: inline-block;
+    text-align: center;
+    background-color: #00bfff;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    box-shadow: 0 0 12px rgba(0, 191, 255, 0.4);
+    transition: all 0.3s ease;
+  }
+  .view-players-btn:hover {
+    background-color: #fff;
+    color: #00bfff;
+    box-shadow: 0 0 20px rgba(0, 191, 255, 0.8);
+    transform: scale(1.05);
+  }
+  
+  .intro-message {
+    max-width: 700px;
+    margin: 0 auto 30px;
+    padding: 15px 20px;
+    background-color: #1e1e1e;
+    border: 1px solid #c89b3c;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(200, 155, 60, 0.3);
+    color: #f0f0f0;
+    text-align: center;
+    line-height: 1.6;
+    font-size: 15px;
+  }
+  
+  .view-players-link {
+    color: #0ff;
+    font-weight: bold;
+    text-decoration: underline;
+  }
+  .view-players-link:hover {
+    color: #fff;
+    text-shadow: 0 0 5px #0ff;
+  }
+  
+  .edit-btn, .del-btn {
+    padding: 4px 8px;
+    border: none;
+    font-size: 14px;
+    border-radius: 6px;
+    margin-left: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.2s ease;
+    animation: popIn 0.5s ease;
+  }
+  .edit-btn {
+    background-color: #007bff;
+    color: #fff;
+  }
+  .edit-btn:hover {
+    background-color: #3399ff;
+  }
+  .del-btn {
+    background-color: #e74c3c;
+    color: #fff;
+  }
+  .del-btn:hover {
+    background-color: #ff6b5c;
+  }
+  
+  @keyframes popIn {
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  
+  
+  .glow {
+    animation: glowPulse 1.5s infinite ease-in-out alternate;
+  }
+  @keyframes glowPulse {
+    from { box-shadow: 0 0 10px #00bfff; }
+    to { box-shadow: 0 0 20px #00ffff; }
+  }
+  
+  .glitch {
+    position: relative;
+    color: #0ff;
+    animation: glitch 1s infinite;
+  }
+  @keyframes glitch {
+    0% { transform: skew(0.5deg); }
+    25% { transform: translate(1px, -1px); }
+    50% { transform: translate(-1px, 1px); }
+    75% { transform: translate(-1px, -1px); }
+    100% { transform: translate(1px, 1px); }
+  }
+  
+  .shine {
+    background: linear-gradient(90deg, #1a1a1a 0%, #333 50%, #1a1a1a 100%);
+    background-size: 200% 100%;
+    animation: shine 3s linear infinite;
+  }
+  @keyframes shine {
+    from { background-position: 200% 0; }
+    to { background-position: -200% 0; }
+  }
+  
+  .fadeInSlide {
+    animation: fadeInSlide 0.8s ease;
+  }
+  @keyframes fadeInSlide {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .hover-jump:hover {
+    transform: translateY(-3px);
+    transition: 0.3s ease;
+  }
+  

@@ -17,8 +17,9 @@
     }
     h1 {
       text-align: center;
-      color: #00bfff;
-      margin-bottom: 10px;
+      color: #c89b3c;
+      text-shadow: 0 0 10px rgba(200, 155, 60, 0.6);
+      animation: glowPulse 1.5s ease-in-out infinite alternate;
     }
     .center {
       text-align: center;
@@ -44,6 +45,11 @@
       background: #222;
       color: #fff;
       box-shadow: 0 0 10px rgba(0,255,255,0.2);
+      transition: all 0.3s ease;
+    }
+    input:focus, select:focus {
+      outline: none;
+      box-shadow: 0 0 15px rgba(0,255,255,0.5);
     }
     #sortSelect {
       width: 320px;
@@ -61,14 +67,32 @@
       border-radius: 10px;
       box-shadow: 0 0 10px rgba(0,255,255,0.15);
       transition: all 0.3s ease;
+      animation: fadeInUp 0.5s ease both;
     }
     li:hover {
       box-shadow: 0 0 15px rgba(0,191,255,0.4);
+      transform: translateY(-3px);
     }
     .stat {
       font-size: 14px;
       color: #ccc;
       margin-top: 5px;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes glowPulse {
+      from { text-shadow: 0 0 10px #c89b3c; }
+      to { text-shadow: 0 0 20px #f7cc5c; }
     }
   </style>
 </head>
@@ -127,8 +151,8 @@
         const li = document.createElement("li");
         const winRate = (p.win + p.lose > 0) ? `승률: ${Math.round((p.win / (p.win + p.lose)) * 100)}%` : '승률 정보 없음';
         li.innerHTML = `
-          <strong>${p.name}</strong> (${p.tier}) - ${p.score}점<br/>
-          <span class="stat">${p.role}${p.sub ? ' / ' + p.sub : ''} | 승: ${p.win || 0} 패: ${p.lose || 0} | ${winRate}</span>
+          <strong style="color:#0ff;">${p.name}</strong> <span style="color:#ccc;">(${p.tier})</span> - <span style="color:#ffd700;">${p.score}점</span><br/>
+          <span class="stat">${p.role}${p.sub ? ' / ' + p.sub : ''} | <span style="color:#00bfff">승: ${p.win || 0}</span> <span style="color:#ff6666">패: ${p.lose || 0}</span> | <span style="color:#00ff99">${winRate}</span></span>
         `;
         playerList.appendChild(li);
       });
