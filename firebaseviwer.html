@@ -10,49 +10,78 @@
   <style>
     body {
       font-family: 'Orbitron', sans-serif;
-      background-color: #111;
-      color: #fff;
+      background: linear-gradient(145deg, #0a0a0a, #111);
+      color: #f0f0f0;
       padding: 20px;
+      margin: 0;
     }
     h1 {
-      color: #00bfff;
       text-align: center;
+      color: #00bfff;
+      margin-bottom: 10px;
     }
-    input[type="text"] {
-      display: block;
-      margin: 0 auto 20px auto;
+    .center {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    a {
+      color: #0ff;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    a:hover {
+      color: #fff;
+      text-shadow: 0 0 5px #0ff;
+    }
+    input, select {
       padding: 10px;
-      border-radius: 6px;
-      border: none;
+      margin: 5px auto;
+      display: block;
       width: 300px;
-      font-size: 16px;
+      border-radius: 8px;
+      border: none;
+      font-size: 15px;
+      background: #222;
+      color: #fff;
+      box-shadow: 0 0 10px rgba(0,255,255,0.2);
+    }
+    #sortSelect {
+      width: 320px;
     }
     ul {
       list-style: none;
       padding: 0;
       max-width: 800px;
-      margin: auto;
+      margin: 0 auto;
     }
     li {
-      background: #222;
-      padding: 10px;
-      margin-bottom: 10px;
-      border-radius: 8px;
-      box-shadow: 0 0 5px rgba(0, 255, 255, 0.3);
+      background: #1a1a1a;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,255,255,0.15);
+      transition: all 0.3s ease;
     }
-    a {
-      color: #0ff;
-      text-decoration: none;
+    li:hover {
+      box-shadow: 0 0 15px rgba(0,191,255,0.4);
     }
-    p.center {
-      text-align: center;
+    .stat {
+      font-size: 14px;
+      color: #ccc;
+      margin-top: 5px;
     }
   </style>
 </head>
 <body>
   <h1>🔥 저장된 플레이어 목록</h1>
   <p class="center"><a href="index.html">← 메인으로 돌아가기</a></p>
+
   <input type="text" id="searchInput" placeholder="🔍 이름으로 검색..." />
+  <select id="sortSelect">
+    <option value="name">🔤 이름순</option>
+    <option value="score">📊 점수순</option>
+    <option value="winrate">🏆 승률순</option>
+  </select>
 
   <ul id="playerData"></ul>
 
@@ -67,38 +96,46 @@
 
     const playerList = document.getElementById("playerData");
     const searchInput = document.getElementById("searchInput");
+    const sortSelect = document.getElementById("sortSelect");
 
     let allPlayers = [];
 
     db.collection("players").get().then(snapshot => {
-      if (snapshot.empty) {
-        playerList.innerHTML = '<li>저장된 데이터가 없습니다.</li>';
-        return;
-      }
-
       snapshot.forEach(doc => {
         allPlayers.push(doc.data());
       });
-
       renderPlayers(allPlayers);
-    }).catch(err => {
-      playerList.innerHTML = '<li>데이터를 불러오는 중 오류 발생: ' + err.message + '</li>';
     });
 
     function renderPlayers(players) {
+      const keyword = searchInput.value.trim().toLowerCase();
+      const filtered = players.filter(p => p.name && p.name.toLowerCase().includes(keyword));
+
+      const sorted = [...filtered].sort((a, b) => {
+        const sortBy = sortSelect.value;
+        if (sortBy === "name") return a.name.localeCompare(b.name);
+        if (sortBy === "score") return b.score - a.score;
+        if (sortBy === "winrate") {
+          const aRate = a.win + a.lose > 0 ? a.win / (a.win + a.lose) : 0;
+          const bRate = b.win + b.lose > 0 ? b.win / (b.win + b.lose) : 0;
+          return bRate - aRate;
+        }
+      });
+
       playerList.innerHTML = '';
-      players.forEach(p => {
+      sorted.forEach(p => {
         const li = document.createElement("li");
-        li.textContent = `${p.name} (${p.tier}, ${p.role}${p.sub ? ' / ' + p.sub : ''}) - ${p.score}점 | 승: ${p.win || 0}, 패: ${p.lose || 0}`;
+        const winRate = (p.win + p.lose > 0) ? `승률: ${Math.round((p.win / (p.win + p.lose)) * 100)}%` : '승률 정보 없음';
+        li.innerHTML = `
+          <strong>${p.name}</strong> (${p.tier}) - ${p.score}점<br/>
+          <span class="stat">${p.role}${p.sub ? ' / ' + p.sub : ''} | 승: ${p.win || 0} 패: ${p.lose || 0} | ${winRate}</span>
+        `;
         playerList.appendChild(li);
       });
     }
 
-    searchInput.addEventListener("input", () => {
-      const keyword = searchInput.value.trim().toLowerCase();
-      const filtered = allPlayers.filter(p => p.name && p.name.toLowerCase().includes(keyword));
-      renderPlayers(filtered);
-    });
+    searchInput.addEventListener("input", () => renderPlayers(allPlayers));
+    sortSelect.addEventListener("change", () => renderPlayers(allPlayers));
   </script>
 </body>
 </html>

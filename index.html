@@ -10,78 +10,85 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <style>
-    body {
-      margin: 0;
-      padding: 20px;
-      font-family: 'Orbitron', sans-serif;
-      background: linear-gradient(135deg, #0f0f0f, #1a1a1a);
-      color: #fff;
-    }
-    h1, h2, h3 {
-      text-align: center;
-      color: #00bfff;
-    }
-    input, select, button {
-      margin: 5px;
-      padding: 10px;
-      border-radius: 8px;
-      border: none;
-      font-size: 14px;
-    }
-    input, select {
-      width: 140px;
-    }
-    button {
-      background-color: #222;
-      color: #0ff;
-      cursor: pointer;
-      box-shadow: 0 0 10px #0ff;
-      transition: 0.3s;
-    }
-    button:hover {
-      background-color: #0ff;
-      color: #000;
-    }
-    #playerList, #teamA, #teamB, #filteredResult {
-      list-style: none;
-      padding-left: 0;
-    }
-    .team {
-      background-color: #121212;
-      border-radius: 12px;
-      margin-top: 20px;
-      padding: 15px;
-      box-shadow: 0 0 10px rgba(0,255,255,0.3);
-    }
-    .team h2 {
-      color: #ff4444;
-    }
-    .blue h2 {
-      color: #44aaff;
-    }
-    .player-list li, .team li {
-      margin: 4px 0;
-    }
-    .delete-btn {
-      margin-left: 10px;
-      background: #ff4444;
-      border-radius: 4px;
-      color: white;
-      padding: 2px 6px;
-      font-size: 12px;
-      cursor: pointer;
-    }
-    .controls {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-    .filter-box {
-      margin-top: 40px;
-      text-align: center;
-    }
-    .team ul li {
+ body {
+  background: linear-gradient(145deg, #0a0a0a, #111);
+  font-family: 'Orbitron', sans-serif;
+  color: #f0f0f0;
+}
+
+h1, h2, h3 {
+  text-align: center;
+  color: #c89b3c; /* 골드색 */
+  text-shadow: 0 0 10px rgba(200, 155, 60, 0.6);
+}
+
+input, select, button {
+  margin: 5px;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  font-size: 14px;
+  font-family: 'Orbitron', sans-serif;
+}
+
+input, select {
+  width: 140px;
+  background-color: #222;
+  color: #fff;
+  border: 1px solid #444;
+}
+
+button {
+  background-color: #111;
+  border: 2px solid #c89b3c;
+  color: #0ff;
+  font-weight: bold;
+  text-transform: uppercase;
+  box-shadow: 0 0 12px rgba(0, 255, 255, 0.3);
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  background-color: #0ff;
+  color: #000;
+  box-shadow: 0 0 20px #0ff;
+}
+
+button:active {
+  transform: scale(0.96);
+  box-shadow: 0 0 5px #0ff;
+}
+
+#playerList, #teamA, #teamB, #filteredResult {
+  list-style: none;
+  padding-left: 0;
+}
+
+.team {
+  background: linear-gradient(to bottom, #1a1a1a, #101010);
+  border: 2px solid #2e2e2e;
+  border-radius: 12px;
+  margin-top: 20px;
+  padding: 15px;
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
+}
+
+.team h2 {
+  color: #ff4444;
+  text-shadow: 0 0 5px #ff4444;
+}
+
+.blue h2 {
+  color: #44aaff;
+  text-shadow: 0 0 5px #44aaff;
+}
+
+.team ul li {
+  margin: 4px 0;
+  padding: 6px;
+  background-color: #1e1e1e;
+  border-left: 4px solid #00bfff;
+  border-radius: 6px;
   animation: fadeInUp 0.5s ease both;
 }
 
@@ -95,51 +102,69 @@
     transform: translateY(0);
   }
 }
-button:active {
-  transform: scale(0.95);
-  box-shadow: 0 0 5px #0ff;
-}.view-players-btn {
-    display: inline-block;
-    text-align: center;
-    background-color: #00bfff;
-    color: #fff;
-    padding: 10px 20px;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: bold;
-    box-shadow: 0 0 10px rgba(0, 191, 255, 0.5);
-    transition: all 0.3s ease;
-  }
 
-  .view-players-btn:hover {
-    background-color: #fff;
-    color: #00bfff;
-    box-shadow: 0 0 15px rgba(0, 191, 255, 0.8);
-    transform: scale(1.05);
-  }
-  .intro-message {
-  max-width: 600px;
+.delete-btn {
+  margin-left: 10px;
+  background: #ff4444;
+  border-radius: 4px;
+  color: white;
+  padding: 2px 6px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+  justify-content: center;
+}
+
+.view-players-btn {
+  display: inline-block;
+  text-align: center;
+  background-color: #00bfff;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+  box-shadow: 0 0 12px rgba(0, 191, 255, 0.4);
+  transition: all 0.3s ease;
+}
+
+.view-players-btn:hover {
+  background-color: #fff;
+  color: #00bfff;
+  box-shadow: 0 0 20px rgba(0, 191, 255, 0.8);
+  transform: scale(1.05);
+}
+
+.intro-message {
+  max-width: 700px;
   margin: 0 auto 30px;
   padding: 15px 20px;
   background-color: #1e1e1e;
-  border: 1px solid #00bfff;
+  border: 1px solid #c89b3c;
   border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 191, 255, 0.3);
-  color: #fff;
+  box-shadow: 0 0 15px rgba(200, 155, 60, 0.3);
+  color: #f0f0f0;
   text-align: center;
   line-height: 1.6;
   font-size: 15px;
 }
+
 .view-players-link {
   color: #0ff;
   font-weight: bold;
   text-decoration: underline;
 }
+
 .view-players-link:hover {
   color: #fff;
   text-shadow: 0 0 5px #0ff;
 }
-
 
 
 
@@ -393,40 +418,65 @@ button:active {
     let currentTeams = { A: [], B: [] };
   
    
-  function generateTeams() {
-    const shuffled = [...players].sort(() => Math.random() - 0.5).sort((a, b) => b.score - a.score);
-    const teamA = [], teamB = [];
-    let sumA = 0, sumB = 0;
+    function generateTeams() {
+  const previousTeams = JSON.parse(localStorage.getItem('previousTeams') || '[]');
+  const maxTries = 100;
+  let bestTeams = null;
+  let bestScoreDiff = Infinity;
 
-    function canAdd(player, team) {
-      const lanes = team.map(p => p.role);
-      if (lanes.includes(player.role)) {
-        if (player.sub && !lanes.includes(player.sub)) return true;
-        return false;
+  for (let i = 0; i < maxTries; i++) {
+    const shuffled = [...players].sort(() => Math.random() - 0.5);
+    const teamA = shuffled.slice(0, 5);
+    const teamB = shuffled.slice(5, 10);
+    
+    const teamANames = teamA.map(p => p.name).sort();
+    const teamBNames = teamB.map(p => p.name).sort();
+
+    const duplicate = previousTeams.some(team =>
+      (arraysEqual(team.teamA, teamANames) && arraysEqual(team.teamB, teamBNames)) ||
+      (arraysEqual(team.teamA, teamBNames) && arraysEqual(team.teamB, teamANames))
+    );
+
+    if (!duplicate) {
+      const sumA = teamA.reduce((s, p) => s + p.score, 0);
+      const sumB = teamB.reduce((s, p) => s + p.score, 0);
+      const diff = Math.abs(sumA - sumB);
+      if (diff < bestScoreDiff) {
+        bestTeams = { teamA, teamB, sumA, sumB };
+        bestScoreDiff = diff;
+        if (diff <= 5) break; // 충분히 균형 맞으면 탈출
       }
-      return true;
     }
-
-    for (const player of shuffled) {
-      if (teamA.length < 5 && (sumA <= sumB || teamB.length >= 5) && canAdd(player, teamA)) {
-        teamA.push(player);
-        sumA += player.score;
-      } else if (teamB.length < 5 && canAdd(player, teamB)) {
-        teamB.push(player);
-        sumB += player.score;
-      } else if (teamA.length < 5) {
-        teamA.push(player);
-        sumA += player.score;
-      } else if (teamB.length < 5) {
-        teamB.push(player);
-        sumB += player.score;
-      }
-      if (teamA.length === 5 && teamB.length === 5) break;
-    }
-
-    currentTeams = { A: teamA, B: teamB };
-    renderTeams(teamA, teamB, sumA, sumB);
   }
+
+  if (bestTeams) {
+    currentTeams = { A: bestTeams.teamA, B: bestTeams.teamB };
+    renderTeams(bestTeams.teamA, bestTeams.teamB, bestTeams.sumA, bestTeams.sumB);
+
+    // 저장
+    localStorage.setItem('previousTeams', JSON.stringify([
+      ...(previousTeams || []),
+      {
+        teamA: bestTeams.teamA.map(p => p.name).sort(),
+        teamB: bestTeams.teamB.map(p => p.name).sort()
+      }
+    ]));
+  } else {
+    Swal.fire({
+      icon: 'warning',
+      title: '팀 생성 실패',
+      text: '겹치지 않는 팀 구성을 찾지 못했습니다. 다시 시도해주세요!',
+      confirmButtonColor: '#ff4444',
+      background: '#1a1a1a',
+      color: '#fff'
+    });
+  }
+}
+
+function arraysEqual(a, b) {
+  return JSON.stringify(a) === JSON.stringify(b);
+}
+
 
 
 
