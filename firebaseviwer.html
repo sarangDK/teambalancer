@@ -98,7 +98,9 @@
 </head>
 <body>
   <h1>🔥 저장된 플레이어 목록</h1>
-  <p class="center"><a href="index.html">← 메인으로 돌아가기</a></p>
+  <p class="center"><a href="index.html">← 메인으로 돌아가기</a>
+    <button id="clearPlayersBtn" style="margin-left:16px; padding:6px 10px; border-radius:6px; background:#ff4444; color:#fff; border:none;">플레이어 초기화</button>
+  </p>
 
   <input type="text" id="searchInput" placeholder="🔍 이름으로 검색..." />
   <select id="sortSelect">
@@ -121,6 +123,7 @@
     const playerList = document.getElementById("playerData");
     const searchInput = document.getElementById("searchInput");
     const sortSelect = document.getElementById("sortSelect");
+    const clearBtn = document.getElementById("clearPlayersBtn");
 
     let allPlayers = [];
 
@@ -130,6 +133,33 @@
       });
       renderPlayers(allPlayers);
     });
+
+    // 플레이어 컬렉션 전체 삭제 (간단 배치 삭제, 문서 수가 많은 경우 반복 처리 필요)
+    async function deleteAllPlayers() {
+      if (!confirm("정말로 Firebase에 저장된 모든 플레이어를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.")) return;
+      try {
+        // 한 번에 가져와서 batch로 삭제
+        const snapshot = await db.collection("players").get();
+        if (snapshot.empty) {
+          alert("삭제할 플레이어가 없습니다.");
+          return;
+        }
+        // Firestore 배치(최대 500문서). 많은 문서가 있으면 반복 처리 필요.
+        const batch = db.batch();
+        snapshot.forEach(doc => batch.delete(doc.ref));
+        await batch.commit();
+
+        // 로컬 상태 갱신 및 UI 리렌더
+        allPlayers = [];
+        renderPlayers(allPlayers);
+        alert("플레이어 초기화 완료");
+      } catch (err) {
+        console.error(err);
+        alert("초기화 중 오류가 발생했습니다: " + err.message);
+      }
+    }
+
+    clearBtn.addEventListener("click", deleteAllPlayers);
 
     function renderPlayers(players) {
       const keyword = searchInput.value.trim().toLowerCase();
