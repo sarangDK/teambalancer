@@ -99,9 +99,31 @@ input[type="text"], select {
   outline:none;
   transition: box-shadow .18s var(--ease), transform .12s var(--ease), border-color .12s;
   z-index:2;
+  -webkit-appearance: none;
+  appearance: none;
 }
+
+/* Ensure native option list uses dark theme where possible */
+select option,
+.swal2-select option {
+  background: var(--bg-2);
+  color: var(--text);
+}
+
+/* SweetAlert2 select inside modal */
+.swal2-select {
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  color: var(--text);
+  border-radius:8px;
+  padding:8px 10px;
+  border:1px solid rgba(255,255,255,0.03);
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* Placeholder / option focus */
 input[type="text"]::placeholder{ color: rgba(230,246,255,0.35) }
-input[type="text"]:focus, select:focus{
+input[type="text"]:focus, select:focus, .swal2-select:focus{
   box-shadow: 0 12px 36px rgba(0,224,255,0.08);
   transform: translateY(-3px);
   border-color: rgba(0,224,255,0.18);

@@ -25,7 +25,7 @@
 
   <div class="controls">
     <input type="text" id="name" placeholder="닉네임" />
-    <select id="tier">
+    <select id="tier"> 
       <option value="마그챌1800+">마그챌 1800+</option>
       <option value="마그챌1700-1799">마그챌 1700~1799</option>
       <option value="마그챌1600-1699">마그챌 1600~1699</option>
@@ -65,8 +65,6 @@
       <option value="실버2">실버 2</option>
       <option value="실버3이하">실버 3 이하</option>
     </select>
-    
-    </select>
     <select id="lane1">
       <option value="상관없음">상관없음</option>
       <option value="탑">탑</option>
@@ -83,11 +81,12 @@
       <option value="원딜">원딜</option>
       <option value="서폿">서폿</option>
     </select>
-    <button onclick="addPlayer()">추가</button>
+
+    <!-- 버튼: 모달로 추가/편집 통합 -->
+    <button onclick="showPlayerModal('add')">추가</button>
     <button onclick="clearPlayers()">초기화</button>
     <button onclick="savePlayersToFirebase()">데이터 저장</button>
     <button onclick="loadPlayersFromFirebase()">🔄 저장된 팀원 불러오기</button>
-   
   </div>
 
   <div class="controls">
