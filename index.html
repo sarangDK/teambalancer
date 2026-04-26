@@ -65,6 +65,7 @@
       <option value="실버2">실버 2</option>
       <option value="실버3이하">실버 3 이하</option>
     </select>
+
     <select id="lane1">
       <option value="상관없음">상관없음</option>
       <option value="탑">탑</option>
@@ -82,8 +83,11 @@
       <option value="서폿">서폿</option>
     </select>
 
-    <!-- 버튼: 모달로 추가/편집 통합 -->
-    <button onclick="showPlayerModal('add')">추가</button>
+    <!-- editingIndex 숨김 필드, 추가 버튼과 취소 버튼 추가 -->
+    <input type="hidden" id="editingIndex" value="">
+    <button id="addBtn" onclick="addPlayer()">추가</button>
+    <button id="cancelEditBtn" onclick="cancelEdit()" style="display:none">취소</button>
+
     <button onclick="clearPlayers()">초기화</button>
     <button onclick="savePlayersToFirebase()">데이터 저장</button>
     <button onclick="loadPlayersFromFirebase()">🔄 저장된 팀원 불러오기</button>
@@ -180,34 +184,53 @@
     renderPlayerList();
   
     function addPlayer() {
-  const name = document.getElementById('name').value.trim();
-  const tier = document.getElementById('tier').value;
-  const lane1 = document.getElementById('lane1').value;
-  const lane2 = document.getElementById('lane2').value;
+    const name = document.getElementById('name').value.trim();
+    const tier = document.getElementById('tier').value;
+    const lane1 = document.getElementById('lane1').value;
+    const lane2 = document.getElementById('lane2').value;
+    if (!name) { alert('닉네임을 입력하세요'); return; }
 
-  const role = lane1 !== "상관없음" ? lane1 : "미정";
-  let score = 0;
-
-  if (scoreTable[tier]) {
-    if (role !== "미정") {
-      // 메인 포지션 점수
-      score = scoreTable[tier][role];
-    } else if (lane2 !== "상관없음") {
-      // 서브 포지션 점수로 계산
-      score = scoreTable[tier][lane2];
-    } else {
-      // 평균 점수 계산
-      const values = Object.values(scoreTable[tier]);
-      score = Math.round(values.reduce((a, b) => a + b, 0) / values.length);
+    const role = lane1 !== "상관없음" ? lane1 : "미정";
+    let score = 0;
+    if (scoreTable[tier]) {
+      if (role !== "미정") score = scoreTable[tier][role];
+      else if (lane2 !== "상관없음") score = scoreTable[tier][lane2];
+      else {
+        const values = Object.values(scoreTable[tier]);
+        score = Math.round(values.reduce((a, b) => a + b, 0) / values.length);
+      }
     }
+
+    const editingIndexEl = document.getElementById('editingIndex');
+    const editVal = editingIndexEl.value;
+    if (editVal !== '') {
+      // 기존 플레이어 업데이트
+      const idx = parseInt(editVal, 10);
+      if (!isNaN(idx) && players[idx]) {
+        players[idx].name = name;
+        players[idx].tier = tier;
+        players[idx].score = score;
+        players[idx].role = role;
+        players[idx].sub = lane2;
+      }
+      // 편집 상태 해제
+      editingIndexEl.value = '';
+      document.getElementById('addBtn').textContent = '추가';
+      document.getElementById('cancelEditBtn').style.display = 'none';
+    } else {
+      // 신규 추가
+      players.push({ name, tier, score, role, sub: lane2, win: 0, lose: 0 });
+    }
+
+    // 입력 초기화 및 저장/렌더
+    document.getElementById('name').value = '';
+    document.getElementById('lane1').value = '상관없음';
+    document.getElementById('lane2').value = '상관없음';
+    saveToLocal();
+    renderPlayerList();
   }
 
-  players.push({ name, tier, score, role, sub: lane2, win: 0, lose: 0 });
-  saveToLocal();
-  renderPlayerList();
-}
-
-function renderPlayerList() {
+  function renderPlayerList() {
   const list = document.getElementById('playerList');
   list.innerHTML = '';
   players.forEach((p, i) => {
@@ -245,15 +268,25 @@ function renderPlayerList() {
 }
 
     function editPlayer(index) {
-      const p = players[index];
-      document.getElementById('name').value = p.name;
-      document.getElementById('tier').value = p.tier;
-      document.getElementById('lane1').value = p.role;
-      document.getElementById('lane2').value = p.sub;
-      players.splice(index, 1);
-      saveToLocal();
-      renderPlayerList();
-    }
+    const p = players[index];
+    if (!p) return;
+    document.getElementById('name').value = p.name || '';
+    document.getElementById('tier').value = p.tier || '';
+    document.getElementById('lane1').value = p.role || '상관없음';
+    document.getElementById('lane2').value = p.sub || '상관없음';
+    document.getElementById('editingIndex').value = String(index);
+    document.getElementById('addBtn').textContent = '저장';
+    document.getElementById('cancelEditBtn').style.display = 'inline-block';
+  }
+
+  function cancelEdit() {
+    document.getElementById('editingIndex').value = '';
+    document.getElementById('name').value = '';
+    document.getElementById('lane1').value = '상관없음';
+    document.getElementById('lane2').value = '상관없음';
+    document.getElementById('addBtn').textContent = '추가';
+    document.getElementById('cancelEditBtn').style.display = 'none';
+  }
   
     function clearPlayers() {
       players.length = 0;
@@ -328,9 +361,18 @@ function arraysEqual(a, b) {
 }
 
 function deletePlayer(index) {
-  players.splice(index, 1);  // 해당 인덱스에서 플레이어 삭제
-  saveToLocal();  // 로컬스토리지에 다시 저장
-  renderPlayerList();  // 플레이어 목록 재렌더링
+  if (!confirm('정말로 이 플레이어를 삭제하시겠습니까?')) return;
+  if (index < 0 || index >= players.length) return;
+  players.splice(index, 1);
+  // 편집 중이던 항목이 삭제되면 편집 상태 초기화
+  const editingIndexEl = document.getElementById('editingIndex');
+  if (editingIndexEl.value !== '') {
+    const editIdx = parseInt(editingIndexEl.value, 10);
+    if (editIdx === index) cancelEdit();
+    else if (editIdx > index) editingIndexEl.value = String(editIdx - 1);
+  }
+  saveToLocal();
+  renderPlayerList();
 }
 
 
