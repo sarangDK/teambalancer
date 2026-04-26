@@ -1,33 +1,35 @@
-/* Modernized, smoother theme — preserves original animations and structure */
+/* Refined modern theme — preserves animations and layout but smoother spacing/colors */
 
 :root{
-  --bg-dark-1:#0a0a0a;
-  --bg-dark-2:#0f1113;
+  --bg-1: #070708;
+  --bg-2: #0f1214;
   --card: rgba(255,255,255,0.02);
   --accent-a: #00bfff;
   --accent-b: #c89b3c;
   --muted: #bfc8d2;
   --glass-border: rgba(255,255,255,0.04);
-  --glass-shadow: 0 10px 30px rgba(0,0,0,0.6);
-  --radius: 10px;
+  --glass-shadow: 0 12px 30px rgba(0,0,0,0.6);
+  --radius: 12px;
   --ease: cubic-bezier(.16,.84,.44,1);
+  --text: #eaf6ff;
 }
 
 *{box-sizing:border-box}
 html,body{height:100%}
 body{
   margin:0;
-  padding:22px;
+  padding:24px;
   font-family: 'Orbitron', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
   background:
-    radial-gradient(600px 300px at 10% 10%, rgba(0,191,255,0.03), transparent),
-    linear-gradient(180deg,var(--bg-dark-1),var(--bg-dark-2));
-  color:#eaf6ff;
+    radial-gradient(700px 320px at 8% 12%, rgba(0,191,255,0.03), transparent),
+    linear-gradient(180deg,var(--bg-1),var(--bg-2));
+  color:var(--text);
   -webkit-font-smoothing:antialiased;
   display:flex;
   flex-direction:column;
-  gap:18px;
+  gap:20px;
   align-items:center;
+  min-height:100vh;
 }
 
 /* Headings */
@@ -40,10 +42,22 @@ h1,h2,h3{
 }
 h1{font-size:1.9rem}
 
-/* Controls (input/select/button) */
-.controls {
+/* Intro box */
+.intro-message{
+  max-width:1000px;
+  width:100%;
+  padding:12px 16px;
+  border-radius:10px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.006));
+  border:1px solid var(--glass-border);
+  color:var(--muted);
+  box-shadow: var(--glass-shadow);
+}
+
+/* Controls container */
+.controls{
   display:flex;
-  gap:12px;
+  gap:10px;
   flex-wrap:wrap;
   justify-content:center;
   align-items:center;
@@ -53,174 +67,146 @@ h1{font-size:1.9rem}
   border-radius:calc(var(--radius) + 2px);
   background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));
   border:1px solid var(--glass-border);
-  box-shadow: var(--glass-shadow);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.45);
 }
 
-input, select, button {
+/* Inputs & selects & buttons */
+input[type="text"], select {
   margin:6px;
   padding:10px 12px;
-  border-radius:8px;
-  border:none;
-  font-size:14px;
-  font-family:inherit;
-  transition: box-shadow .18s var(--ease), transform .12s var(--ease), background .12s var(--ease);
-}
-
-/* inputs & selects */
-input[type="text"], select {
+  border-radius:10px;
   background: rgba(255,255,255,0.02);
-  color:#eaf6ff;
+  color:var(--text);
   border:1px solid rgba(255,255,255,0.03);
   min-width:160px;
-  max-width:380px;
+  max-width:360px;
   outline:none;
+  transition: box-shadow .18s var(--ease), transform .12s var(--ease);
 }
 input[type="text"]:focus, select:focus{
   box-shadow: 0 10px 28px rgba(0,191,255,0.08);
   transform: translateY(-2px);
 }
 
-/* Primary action button style */
+button, .button, .btn {
+  margin:6px;
+  padding:10px 12px;
+  border-radius:10px;
+  border:none;
+  font-weight:700;
+  cursor:pointer;
+  transition: transform .12s var(--ease), box-shadow .12s var(--ease);
+}
+button:hover, .button:hover, .btn:hover { transform: translateY(-2px); }
 .button {
+  background: linear-gradient(90deg,var(--accent-a), #44aaff);
+  color:#021018;
+  box-shadow: 0 12px 30px rgba(0,191,255,0.08);
+}
+
+/* Link button */
+.view-players-link, .view-players-btn {
   display:inline-flex;
   align-items:center;
   gap:8px;
-  padding:10px 14px;
-  background: linear-gradient(90deg,var(--accent-a), #44aaff);
-  color:#021018;
-  border-radius:10px;
-  border:1px solid rgba(255,255,255,0.03);
-  cursor:pointer;
-  font-weight:800;
-  box-shadow: 0 12px 30px rgba(0,191,255,0.08);
-}
-.button.ghost{
-  background:transparent;
-  color:var(--accent-a);
-  border:1px solid rgba(68,170,255,0.12);
-}
-.button:active{ transform:translateY(1px) scale(.998) }
-
-/* Old button compatibility */
-button {
-  background-color: transparent;
-  border: 2px solid rgba(200,155,60,0.12);
-  color: var(--accent-a);
-  font-weight: 700;
-  text-transform: uppercase;
-  box-shadow: 0 6px 20px rgba(0,191,255,0.05);
-  cursor:pointer;
-}
-button:hover {
-  background-color: rgba(0,191,255,0.06);
-  color: #dff9ff;
-  box-shadow: 0 14px 36px rgba(0,191,255,0.08);
-}
-button:active {
-  transform: scale(0.98);
-  box-shadow: 0 6px 10px rgba(0,191,255,0.04);
-}
-
-/* Lists and team cards */
-#playerList, #teamA, #teamB, #filteredResult {
-  list-style:none;
-  padding-left:0;
-  margin:0;
-}
-
-/* Team container — keep original but smoother */
-.team {
-  background: linear-gradient(to bottom, rgba(255,255,255,0.01), rgba(255,255,255,0.005));
-  border:1px solid rgba(255,255,255,0.03);
-  border-radius:12px;
-  margin-top:18px;
-  padding:14px;
-  box-shadow: 0 8px 28px rgba(0,191,255,0.04);
-}
-.team h2 {
-  color:#ff6b6b;
-  text-shadow: 0 0 6px rgba(255,107,107,0.06);
-}
-.blue h2 {
-  color:#44aaff;
-  text-shadow: 0 0 6px rgba(68,170,255,0.06);
-}
-.team ul li {
-  margin:8px 0;
-  padding:10px;
-  background: rgba(255,255,255,0.015);
-  border-left:4px solid rgba(0,191,255,0.2);
+  padding:8px 12px;
   border-radius:8px;
-  animation: fadeInUp 0.48s var(--ease) both;
+  color:var(--accent-a);
+  background:transparent;
+  border:1px solid rgba(68,170,255,0.06);
+  text-decoration:none;
 }
 
-/* Player card (modernized) */
-.player-card {
+/* Player list wrapper */
+.player-list, #playerList {
+  width:100%;
+  max-width:1100px;
+  list-style:none;
+  padding:0;
+  margin:0;
   display:flex;
   flex-direction:column;
-  gap:8px;
-  padding:12px;
-  border-radius:12px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));
-  border:1px solid rgba(255,255,255,0.03);
-  box-shadow: 0 8px 30px rgba(0,0,0,0.6);
-  transition: transform .14s var(--ease), box-shadow .14s var(--ease);
-}
-.player-card:hover{
-  transform: translateY(-6px);
-  box-shadow: 0 18px 50px rgba(0,191,255,0.06);
+  gap:10px;
 }
 
-/* Top row: name/tier/score */
-.player-head {
+/* Player item (card-like) */
+#playerList > li {
   display:flex;
   justify-content:space-between;
   align-items:center;
   gap:12px;
-}
-.player-meta { display:flex; align-items:center; gap:12px; }
-.name {
-  font-weight:800;
-  color:#e6fbff;
-  font-size:1.02rem;
-}
-.tier {
-  padding:6px 10px;
-  border-radius:999px;
-  font-weight:700;
-  color:var(--accent-b);
-  background: linear-gradient(90deg, rgba(200,155,60,0.06), rgba(255,215,80,0.02));
-  border:1px solid rgba(200,155,60,0.04);
-}
-.score {
-  font-weight:800;
-  color:#ffd870;
-  padding:6px 10px;
+  padding:12px;
+  margin:0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.012), rgba(255,255,255,0.005));
   border-radius:10px;
-  background: rgba(255,216,112,0.03);
-  border:1px solid rgba(255,216,112,0.04);
+  border:1px solid rgba(255,255,255,0.03);
+  box-shadow: 0 8px 22px rgba(0,0,0,0.6);
+  transition: transform .16s var(--ease), box-shadow .16s var(--ease);
+  animation: fadeInUp .45s var(--ease) both;
+}
+#playerList > li:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 48px rgba(0,191,255,0.06);
 }
 
-/* Stats and pills */
-.player-stats{
+/* left content inside player item */
+.item-left {
   display:flex;
-  gap:10px;
-  align-items:center;
-  flex-wrap:wrap;
-  color:var(--muted);
-  font-size:0.95rem;
+  flex-direction:column;
+  gap:6px;
 }
-.stat-pill{
-  display:inline-flex;
-  gap:8px;
+.item-left .title {
+  font-weight:800;
+  color:#cfefff;
+  font-size:1.02rem;
+}
+.item-left .meta {
+  color:var(--muted);
+  font-size:0.92rem;
+}
+
+/* right controls inside player item */
+.item-right {
+  display:flex;
   align-items:center;
-  padding:6px 10px;
-  border-radius:999px;
-  background: rgba(255,255,255,0.01);
+  gap:8px;
+}
+.edit-btn, .del-btn {
+  padding:8px 10px;
+  border-radius:8px;
+  font-weight:700;
+  cursor:pointer;
+  border:none;
+  transition: transform .12s var(--ease);
+}
+.edit-btn { background: linear-gradient(90deg,#2f8cff,#3399ff); color:#fff; }
+.del-btn { background: linear-gradient(90deg,#ff6b6b,#e74c3c); color:#fff; }
+
+/* Team boxes */
+.team {
+  width:100%;
+  max-width:1100px;
+  padding:12px;
+  border-radius:12px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));
+  border:1px solid rgba(255,255,255,0.03);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.04);
+}
+.team h2 { margin:0 0 8px 0; }
+.team ul { list-style:none; padding:8px; margin:0; display:flex; flex-direction:column; gap:8px; }
+
+/* small team list item */
+.team ul li {
+  padding:8px 10px;
+  border-radius:8px;
+  background: rgba(255,255,255,0.012);
   border:1px solid rgba(255,255,255,0.02);
 }
 
-/* Small control buttons */
+/* score text */
+#scoreA, #scoreB { color:var(--muted); margin-top:8px; }
+
+/* Player controls for firebase viewer compatibility */
 .player-controls{ display:flex; gap:8px; margin-top:6px; }
 .small-btn{
   padding:8px 10px;
@@ -228,94 +214,36 @@ button:active {
   font-weight:800;
   cursor:pointer;
   border:none;
-  transition: transform .08s var(--ease), box-shadow .08s var(--ease);
 }
-.small-btn.win{
-  background: linear-gradient(90deg,#00ffd5,#00bfff);
-  color:#022;
-  box-shadow: 0 8px 20px rgba(0,191,255,0.06);
-}
-.small-btn.lose{
-  background: linear-gradient(90deg,#ff8a8a,#ff6666);
-  color:#220;
-  box-shadow: 0 8px 18px rgba(255,100,100,0.05);
-}
-.small-btn.del{
-  background: linear-gradient(90deg,#ff7b7b,#e74c3c);
-  color:#fff;
-  box-shadow: 0 8px 18px rgba(255,80,80,0.06);
-}
-.small-btn:active{ transform: translateY(1px) }
-
-/* Legacy edit/del btn styling compatibility */
-.edit-btn, .del-btn {
-  padding: 6px 10px;
-  border-radius: 8px;
-  margin-left:6px;
-  cursor:pointer;
-  font-weight:700;
-  transition: all .16s var(--ease);
-}
-.edit-btn { background: linear-gradient(90deg,#2f8cff,#3399ff); color:#fff; border:none; }
-.del-btn { background: linear-gradient(90deg,#ff6b6b,#e74c3c); color:#fff; border:none; }
+.small-btn.win{ background: linear-gradient(90deg,#00ffd5,#00bfff); color:#022; }
+.small-btn.lose{ background: linear-gradient(90deg,#ff8a8a,#ff6666); color:#220; }
+.small-btn.del{ background: linear-gradient(90deg,#ff7b7b,#e74c3c); color:#fff; }
 
 /* Empty state */
 .empty {
   text-align:center;
-  padding:24px;
+  padding:22px;
   border-radius:10px;
   color:var(--muted);
   background: linear-gradient(180deg, rgba(255,255,255,0.01), transparent);
   border:1px dashed rgba(255,255,255,0.03);
 }
 
-/* Keep original keyframes (slightly tuned) */
+/* Animations preserved and tuned */
 @keyframes fadeInUp {
-  from { opacity:0; transform: translateY(8px); }
+  from { opacity:0; transform: translateY(10px); }
   to { opacity:1; transform: translateY(0); }
 }
-@keyframes popIn {
-  from { opacity: 0; transform: scale(0.92); }
-  to { opacity: 1; transform: scale(1); }
-}
-.glow { animation: glowPulse 1.5s infinite ease-in-out alternate; }
 @keyframes glowPulse {
-  from { box-shadow: 0 0 10px rgba(0,191,255,0.18); }
-  to { box-shadow: 0 0 22px rgba(0,255,255,0.24); }
+  from { text-shadow: 0 0 10px rgba(200,155,60,0.18); }
+  to { text-shadow: 0 0 20px rgba(247,204,92,0.22); }
 }
-@keyframes glitch {
-  0% { transform: skew(0.3deg); }
-  25% { transform: translate(1px,-1px); }
-  50% { transform: translate(-1px,1px); }
-  75% { transform: translate(-1px,-1px); }
-  100% { transform: translate(1px,1px); }
-}
-.glitch { position:relative; color:var(--accent-a); animation: glitch 1s infinite; }
+.glow { animation: glowPulse 1.5s ease-in-out infinite alternate; }
 
-@keyframes shine {
-  from { background-position: 200% 0; }
-  to { background-position: -200% 0; }
-}
-.shine {
-  background: linear-gradient(90deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.01) 50%, rgba(255,255,255,0.02) 100%);
-  background-size: 200% 100%;
-  animation: shine 3.2s linear infinite;
-}
-
-.fadeInSlide {
-  animation: fadeInSlide 0.8s ease both;
-}
-@keyframes fadeInSlide {
-  from { opacity:0; transform: translateY(16px); }
-  to { opacity:1; transform: translateY(0); }
-}
-
-.hover-jump:hover { transform: translateY(-3px); transition: transform .3s var(--ease); }
-
-/* Responsive tweaks */
-@media (max-width:760px){
+/* small responsive tweaks */
+@media (max-width:860px){
   .controls{ padding:10px; gap:8px }
+  #playerList > li { flex-direction:column; align-items:flex-start; gap:10px; }
+  .item-right{ width:100%; justify-content:flex-end; }
   input[type="text"], select { width: 100%; min-width:0; }
-  .player-head{ flex-direction:column; align-items:flex-start; gap:8px; }
-  .player-meta{ flex-direction:row; gap:8px; }
 }
