@@ -129,7 +129,8 @@
 
     db.collection("players").get().then(snapshot => {
       snapshot.forEach(doc => {
-        allPlayers.push(doc.data());
+        // 문서 id를 보관해야 개별 조작 가능
+        allPlayers.push({ id: doc.id, ...doc.data() });
       });
       renderPlayers(allPlayers);
     });
@@ -161,6 +162,45 @@
 
     clearBtn.addEventListener("click", deleteAllPlayers);
 
+    // 개별 승/패 카운트 업데이트 (트랜잭션 사용)
+    async function updateCounts(playerId, addWin = 0, addLose = 0) {
+      const ref = db.collection("players").doc(playerId);
+      try {
+        await db.runTransaction(async (tx) => {
+          const doc = await tx.get(ref);
+          if (!doc.exists) throw new Error("플레이어 문서를 찾을 수 없습니다.");
+          const data = doc.data();
+          const newWin = (data.win || 0) + addWin;
+          const newLose = (data.lose || 0) + addLose;
+          tx.update(ref, { win: newWin, lose: newLose });
+        });
+        // 로컬 복사에도 반영
+        const idx = allPlayers.findIndex(p => p.id === playerId);
+        if (idx !== -1) {
+          allPlayers[idx].win = (allPlayers[idx].win || 0) + addWin;
+          allPlayers[idx].lose = (allPlayers[idx].lose || 0) + addLose;
+          renderPlayers(allPlayers);
+        }
+      } catch (err) {
+        console.error(err);
+        alert("승/패 업데이트 실패: " + err.message);
+      }
+    }
+
+    // 개별 플레이어 삭제
+    async function deletePlayer(playerId) {
+      if (!confirm("정말로 이 플레이어를 삭제하시겠습니까?")) return;
+      try {
+        await db.collection("players").doc(playerId).delete();
+        allPlayers = allPlayers.filter(p => p.id !== playerId);
+        renderPlayers(allPlayers);
+        alert("삭제 완료");
+      } catch (err) {
+        console.error(err);
+        alert("삭제 중 오류: " + err.message);
+      }
+    }
+
     function renderPlayers(players) {
       const keyword = searchInput.value.trim().toLowerCase();
       const filtered = players.filter(p => p.name && p.name.toLowerCase().includes(keyword));
@@ -181,9 +221,46 @@
         const li = document.createElement("li");
         const winRate = (p.win + p.lose > 0) ? `승률: ${Math.round((p.win / (p.win + p.lose)) * 100)}%` : '승률 정보 없음';
         li.innerHTML = `
-          <strong style="color:#0ff;">${p.name}</strong> <span style="color:#ccc;">(${p.tier})</span> - <span style="color:#ffd700;">${p.score}점</span><br/>
-          <span class="stat">${p.role}${p.sub ? ' / ' + p.sub : ''} | <span style="color:#00bfff">승: ${p.win || 0}</span> <span style="color:#ff6666">패: ${p.lose || 0}</span> | <span style="color:#00ff99">${winRate}</span></span>
+          <strong style="color:#0ff;">${p.name}</strong> <span style="color:#ccc;">(${p.tier || ''})</span> - <span style="color:#ffd700;">${p.score || 0}점</span><br/>
+          <span class="stat">${p.role || ''}${p.sub ? ' / ' + p.sub : ''} | <span style="color:#00bfff">승: ${p.win || 0}</span> <span style="color:#ff6666">패: ${p.lose || 0}</span> | <span style="color:#00ff99">${winRate}</span></span>
         `;
+
+        // 컨트롤 버튼 추가
+        const ctrl = document.createElement('div');
+        ctrl.style.marginTop = '8px';
+        const winBtn = document.createElement('button');
+        winBtn.textContent = '+승';
+        winBtn.style.marginRight = '6px';
+        winBtn.style.padding = '6px';
+        winBtn.style.borderRadius = '6px';
+        winBtn.style.background = '#00bfff';
+        winBtn.style.color = '#000';
+        winBtn.style.border = 'none';
+        winBtn.addEventListener('click', () => updateCounts(p.id, 1, 0));
+
+        const loseBtn = document.createElement('button');
+        loseBtn.textContent = '+패';
+        loseBtn.style.marginRight = '6px';
+        loseBtn.style.padding = '6px';
+        loseBtn.style.borderRadius = '6px';
+        loseBtn.style.background = '#ff6666';
+        loseBtn.style.color = '#000';
+        loseBtn.style.border = 'none';
+        loseBtn.addEventListener('click', () => updateCounts(p.id, 0, 1));
+
+        const delBtn = document.createElement('button');
+        delBtn.textContent = '삭제';
+        delBtn.style.padding = '6px';
+        delBtn.style.borderRadius = '6px';
+        delBtn.style.background = '#ff4444';
+        delBtn.style.color = '#fff';
+        delBtn.style.border = 'none';
+        delBtn.addEventListener('click', () => deletePlayer(p.id));
+
+        ctrl.appendChild(winBtn);
+        ctrl.appendChild(loseBtn);
+        ctrl.appendChild(delBtn);
+        li.appendChild(ctrl);
         playerList.appendChild(li);
       });
     }
